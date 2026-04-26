@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
-
+const passport = require('./middleware/passport')
+app.use(passport.initialize())
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes)
 

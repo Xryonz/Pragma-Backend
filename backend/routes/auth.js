@@ -77,5 +77,23 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Erro interno.' })
   }
 })
+const passport = require('../middleware/passport')
+const jwt = require('jsonwebtoken')
 
+// GET /api/auth/google — inicia o login com Google
+router.get('/google',
+  passport.authenticate('google', { scope: ['profile', 'email'], session: false })
+)
+
+// GET /api/auth/google/callback — Google redireciona aqui após login
+router.get('/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login` }),
+  (req, res) => {
+    const user = req.user
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '7d' })
+    
+    // Redireciona para o frontend com o token na URL
+    res.redirect(`${process.env.FRONTEND_URL}?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&id=${user.id}`)
+  }
+)
 module.exports = router
