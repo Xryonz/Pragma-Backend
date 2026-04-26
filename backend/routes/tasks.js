@@ -69,23 +69,22 @@ router.post('/', async (req, res) => {
 })
 
 // PUT /api/tasks/:id
+// PUT /api/tasks/:id
 router.put('/:id', async (req, res) => {
   const { title, description, deadline, priority, done } = req.body
 
   try {
-    // 📚 COALESCE(novo_valor, valor_atual) — mantém o valor atual se não enviar o campo
-    // Sempre filtre por user_id para garantir que só o dono edita a tarefa!
     const result = await pool.query(
       `UPDATE tasks
        SET title       = COALESCE($1, title),
            description = COALESCE($2, description),
-           deadline    = COALESCE($3, deadline),
+           deadline    = $3,
            priority    = COALESCE($4, priority),
            done        = COALESCE($5, done),
            updated_at  = NOW()
        WHERE id = $6 AND user_id = $7
        RETURNING *`,
-      [title, description, deadline, priority, done, req.params.id, req.userId]
+      [title, description, deadline || null, priority, done, req.params.id, req.userId]
     )
     if (result.rows.length === 0)
       return res.status(404).json({ error: 'Tarefa não encontrada.' })
