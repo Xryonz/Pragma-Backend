@@ -81,19 +81,19 @@ const passport = require('../middleware/passport')
 
 
 // GET /api/auth/google — inicia o login com Google
+// GET /api/auth/google — inicia o login com Google
 router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'], session: false })
 )
 
 // GET /api/auth/google/callback — Google redireciona aqui após login
 router.get('/google/callback',
-  passport.authenticate('google', { session: false, failureRedirect: `${process.env.FRONTEND_URL}/login` }),
+  passport.authenticate('google', { session: false, failureRedirect: 'http://localhost:3000/login' }),
   (req, res) => {
     const user = req.user
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '7d' })
-    
-    // Redireciona para o frontend com o token na URL
-    res.redirect(`${process.env.FRONTEND_URL}?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&id=${user.id}`)
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' })
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
+    res.redirect(`${frontendUrl}?token=${token}&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&id=${user.id}`)
   }
 )
 module.exports = router
