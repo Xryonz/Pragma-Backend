@@ -16,14 +16,13 @@ passport.use(
 
         // Verifica se o usuário já existe
         const existing = await pool.query(
-          'SELECT * FROM users WHERE email = $1 AND provider = $2',
-          [email, 'google']
-        )
+  'SELECT * FROM users WHERE email = $1',
+  [email]
+)
 
-        if (existing.rows.length > 0) {
-          return done(null, existing.rows[0])
-        }
-
+if (existing.rows.length > 0) {
+  return done(null, existing.rows[0])
+}
         // Cria novo usuário
         const result = await pool.query(
           'INSERT INTO users (name, email, provider) VALUES ($1, $2, $3) RETURNING *',
