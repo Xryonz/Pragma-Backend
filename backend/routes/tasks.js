@@ -72,6 +72,8 @@ router.post('/', async (req, res) => {
 // PUT /api/tasks/:id
 router.put('/:id', async (req, res) => {
   const { title, description, deadline, priority, done } = req.body
+  console.log('PUT body:', req.body)
+  console.log('deadline recebido:', deadline)
 
   try {
     const result = await pool.query(
