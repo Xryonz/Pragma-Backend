@@ -78,7 +78,7 @@ router.post('/login', async (req, res) => {
   }
 })
 const passport = require('../middleware/passport')
-const jwt = require('jsonwebtoken')
+
 
 // GET /api/auth/google — inicia o login com Google
 router.get('/google',
